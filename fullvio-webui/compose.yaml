@@ -1,7 +1,7 @@
 services:
     postgres:
         image: pgvector/pgvector:${POSTGRES_TAG:-pg16}
-        container_name: ${POSTGRES_CNTNR:-fullvio-webui_postgres}
+        container_name: ${POSTGRES_CNTNR:-postgres}
         restart: always
         security_opt:
             - no-new-privileges:true
@@ -25,7 +25,7 @@ services:
 
     redis:
         image: redis:${REDIS_TAG:-7-alpine}
-        container_name: ${REDIS_CNTNR:-fullvio-webui_redis}
+        container_name: ${REDIS_CNTNR:-redis}
         restart: always
         security_opt:
             - no-new-privileges:true
@@ -49,9 +49,9 @@ services:
         networks:
             - webui
 
-    open-webui:
+    fullvio-webui:
         image: fullviodev/fullvio-webui:${WEBUI_TAG:-v0.9.5F}
-        container_name: ${WEBUI_CNTNR:-fullvio-webui}
+        container_name: ${WEBUI_CNTNR:-webui}
         restart: always
         security_opt:
             - no-new-privileges:true
@@ -77,13 +77,13 @@ services:
             ENABLE_PERSISTENT_CONFIG: "false"
             ENABLE_VERSION_UPDATE_CHECK: ${ENABLE_VERSION_UPDATE_CHECK:-false}
             OFFLINE_MODE: "false"
-            CUSTOM_NAME: "Fullvio"
-            WEBUI_NAME: "Fullvio"
+            CUSTOM_NAME: ${CUSTOM_NAME}
+            WEBUI_NAME: ${WEBUI_NAME}
             WEBUI_URL: ${WEBUI_URL:?}
             WEBUI_AUTH: "true"
             WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY:?}
             ENABLE_LOGIN_FORM: "true"
-            ENABLE_SIGNUP: ${ENABLE_SIGNUP:-true}
+            ENABLE_SIGNUP: ${ENABLE_SIGNUP:-false}
             DEFAULT_USER_ROLE: "pending"
             JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-24h}
             BYPASS_MODEL_ACCESS_CONTROL: "false"
@@ -91,9 +91,9 @@ services:
             ENABLE_ADMIN_CHAT_ACCESS: "true"
             ADMIN_EMAIL: ${ADMIN_EMAIL}
             WEBUI_SESSION_COOKIE_SECURE: "true"
-            WEBUI_SESSION_COOKIE_SAME_SITE: ${WEBUI_COOKIE_SAME_SITE:-lax}
+            WEBUI_SESSION_COOKIE_SAME_SITE: ${WEBUI_COOKIE_SAME_SITE}
             CORS_ALLOW_ORIGIN: ${WEBUI_URL}
-            FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-*}
+            FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS}
             PENDING_USER_OVERLAY_TITLE: ${PENDING_USER_OVERLAY_TITLE}
             PENDING_USER_OVERLAY_CONTENT: ${PENDING_USER_OVERLAY_CONTENT}
             RESPONSE_WATERMARK: ${RESPONSE_WATERMARK}
