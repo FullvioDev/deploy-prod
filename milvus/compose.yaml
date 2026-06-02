@@ -1,6 +1,6 @@
 services:
   etcd:
-    image: quay.io/coreos/etcd:${ETCD_TAG:-v3.5.18}
+    image: quay.io/coreos/etcd:${ETCD_TAG:-v3.6.12}
     container_name: ${ETCD_CNTNR:-milvus-etcd}
     restart: unless-stopped
     environment:
