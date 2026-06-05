@@ -23,6 +23,44 @@ services:
         networks:
             - webui
 
+
+    pgadmin:
+        image: dpage/pgadmin4:${PGADMIN_TAG:-9.15.0}
+        container_name: ${PGADMIN_CNTNR:-pgadmin}
+        restart: always
+        security_opt:
+            - no-new-privileges:true
+        depends_on:
+            postgres:
+                condition: service_healthy
+        ports:
+            - "${PGADMIN_PORT:-5050}:5050"
+        volumes:
+            - ${DIR}/pgadmin:/var/lib/pgadmin
+        logging:
+            driver: json-file
+            options:
+                max-size: "10m"
+                max-file: "5"
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@local}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+            PGADMIN_SERVER_JSON_FILE: "/var/lib/pgadmin/pgadmin-servers.json"
+            PGADMIN_LISTEN_PORT: "5050"
+            PGADMIN_DISABLE_POSTFIX: "True"
+            PGADMIN_CONFIG_SERVER_MODE: "False"
+            PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION: "False"
+            PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+        healthcheck:
+            test: ["CMD", "wget", "-qO-", "http://127.0.0.1:5050/misc/ping"]
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
+        networks:
+            - webui
+
+
     redis:
         image: redis:${REDIS_TAG:-7-alpine}
         container_name: ${REDIS_CNTNR:-redis}
